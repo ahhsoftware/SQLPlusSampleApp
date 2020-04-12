@@ -11,9 +11,7 @@ namespace SqlPlusDemo.Tests
     {
 
         /// <summary>
-        /// Illustrating a valid call for insert - all properties pass validation
-        /// and we leave the Feedback Id set to it's default 0
-        /// Utilizing dbo.FeedbackUpsert
+        /// Illustrating dbo.FeedbackInsert
         /// </summary>
         [Test]
         [Order(1)]
@@ -27,18 +25,23 @@ namespace SqlPlusDemo.Tests
                 Message = "This is a message",
                 Subject = "Thank is a subject"
             };
-            Assert.IsTrue(input.IsValid());
+            if(input.IsValid())
+            {
+                //Call the service to get the output object
+                var output = ServiceFactory.Data().FeedbackInsert(input);
 
-            //Call the service to get the output object
-            var output = ServiceFactory.Data().FeedbackInsert(input);
+                //We can test the return value against the enumeration for Inserted
+                Assert.IsTrue(output.ReturnValue == FeedbackInsertOutput.Returns.Ok);
 
-            //We can test the return value against the enumeration for Inserted
-            Assert.IsTrue(output.ReturnValue == FeedbackInsertOutput.Returns.Ok);
-
+            }
+            else
+            {
+                Utilities.WriteValidationErrors(input);
+            }
         }
 
         /// <summary>
-        /// Illustrating an inline-table function 
+        /// Illustrating dbo.FeedbackTable (Single Row)
         /// </summary>
         [Test]
         [Order(2)]
@@ -46,18 +49,38 @@ namespace SqlPlusDemo.Tests
         {
             var input = new FeedbackTableInput
             {
-                FeedbackId = 1
+               FeedbackId = 1
             };
-            Assert.IsTrue(input.IsValid());
 
-            //Call the service to get the output object
-            var output = ServiceFactory.Data().FeedbackTable(input);
-            Console.WriteLine(output.ResultData.Created);
+            if (input.IsValid())
+            {
+                //Call the service to get the output object
+                var output = ServiceFactory.Data().FeedbackTable(input);
+
+                //The result data contains our single result.
+                var record = output.ResultData;
+
+                //Writing out the individual properties (columns) of the result
+                Console.WriteLine(record.Created);
+                Console.WriteLine(record.Email);
+                Console.WriteLine(record.FeedbackId);
+                Console.WriteLine(record.FirstName);
+                Console.WriteLine(record.LastName);
+                Console.WriteLine(record.Message);
+                Console.WriteLine(record.Subject);
+
+                Assert.Pass();
+            }
+            else
+            {
+                //Writing out the validation errors
+                Utilities.WriteValidationErrors(input);
+                Assert.Fail();
+            }
         }
 
         /// <summary>
-        /// Illustrating a valid call for delete - we use the value from 
-        /// the previously created record (1)
+        /// Illustrating dbo.FeedbackTableMulti (Multi Row)
         /// </summary>
         [Test]
         [Order(3)]
@@ -67,21 +90,32 @@ namespace SqlPlusDemo.Tests
             {
                 FeedbackId = 1
             };
-            Assert.IsTrue(input.IsValid());
-
-            //Call the service to get the output object
-            var output = ServiceFactory.Data().FeedbackTableMulti(input);
-
-            foreach(FeedbackTableMultiResult row in output.ResultData)
+            if(input.IsValid())
             {
-                Console.WriteLine(row.LastName);
+                //Call the service to get the output object
+                var output = ServiceFactory.Data().FeedbackTableMulti(input);
+
+                //The result data contains our list of results (multi row)
+                var records = output.ResultData;
+                foreach(var record in records)
+                {
+                    //Writing out the individual properties (columns) of the result
+                    Console.WriteLine(record.FeedbackId);
+                    Console.WriteLine(record.LastName);
+                }
+
+                Assert.Pass();
+            }
+            else
+            {
+                //Writing out the validation errors
+                Utilities.WriteValidationErrors(input);
+                Assert.Fail();
             }
         }
 
         /// <summary>
-        /// Illustrating a valid call for update - all properties pass validation
-        /// and we use the value from the previously created record (1)
-        /// Utilizing dbo.FeedbackUpsert
+        /// Illustrating dbo.FeedbackUpdateInput
         /// </summary>
         [Test]
         [Order(4)]
@@ -96,19 +130,25 @@ namespace SqlPlusDemo.Tests
                 Message = "This is a different message",
                 Subject = "A different subject"
             };
-            Assert.IsTrue(input.IsValid());
-            
-            //Call the service to get the output object
-            var output = ServiceFactory.Data().FeedbackUpdate(input);
+            if (input.IsValid())
+            {
+                //Call the service to get the output object
+                var output = ServiceFactory.Data().FeedbackUpdate(input);
 
-            //We can test the return value against the enumeration for Modified
-            Assert.IsTrue(output.ReturnValue == FeedbackUpdateOutput.Returns.Ok);
+                //We can test the return value against the enumeration for Inserted
+                Assert.IsTrue(output.ReturnValue == FeedbackUpdateOutput.Returns.Ok);
 
+            }
+            else
+            {
+                //Writing out the validation errors
+                Utilities.WriteValidationErrors(input);
+                Assert.Fail();
+            }
         }
 
         /// <summary>
-        /// Illustrating the required tag - all properties are marked required
-        /// and Feedback Id has a default of zero.
+        /// Illustrating dbo.FeedbackInsertInput with null parameters
         /// </summary>
         [Test]
         [Order(5)]
@@ -126,7 +166,7 @@ namespace SqlPlusDemo.Tests
             //Expecting a failure
             Assert.IsTrue(input.IsValid() == false);
 
-            Utilities.WriteValidationErrors(input.ValidationResults);
+            Utilities.WriteValidationErrors(input);
         }
 
         /// <summary>
@@ -146,13 +186,12 @@ namespace SqlPlusDemo.Tests
             };
             //Expecting a failure
             Assert.IsTrue(input.IsValid() == false);
-            Utilities.WriteValidationErrors(input.ValidationResults);
+            Utilities.WriteValidationErrors(input);
         }
 
 
         /// <summary>
-        /// Illustrating a valid call for select by id
-        /// Utilizing dbo.FeedbackById
+        /// Illustrating dbo.FeedbackById
         /// </summary>
         [Test]
         [Order(7)]
@@ -162,25 +201,34 @@ namespace SqlPlusDemo.Tests
             {
                 FeedbackId = 1
             };
-            Assert.IsTrue(input.IsValid());
+            if(input.IsValid())
+            {
+                //Call the service to get the output object
+                var output = ServiceFactory.Data().FeedbackById(input);
 
-            //Call the service to get the output object
-            var output = ServiceFactory.Data().FeedbackById(input);
+                //We can test the return value against the enumeration for Ok
+                Assert.IsTrue(output.ReturnValue == FeedbackByIdOutput.Returns.Ok);
 
-            //We can test the return value against the enumeration for Ok
-            Assert.IsTrue(output.ReturnValue == FeedbackByIdOutput.Returns.Ok);
+                //The result data contains our single result.
+                var record = output.ResultData;
+               
+                Console.WriteLine(record.Created);
+                Console.WriteLine(record.Email);
+                Console.WriteLine(record.FeedbackId);
+                Console.WriteLine(record.FirstName);
+                Console.WriteLine(record.LastName);
+                Console.WriteLine(record.Message);
+                Console.WriteLine(record.Subject);
 
-            //Check the result data aligns with the values from test 2
-            Assert.IsTrue(output.ResultData.Email == "SomeoneElse@SQLPLUS.net");
+                Assert.Pass();
 
-            var feedback = output.ResultData;
-            Console.WriteLine(feedback.Created);
-            Console.WriteLine(feedback.Email);
-            Console.WriteLine(feedback.FeedbackId);
-            Console.WriteLine(feedback.FirstName);
-            Console.WriteLine(feedback.LastName);
-            Console.WriteLine(feedback.Message);
-            Console.WriteLine(feedback.Subject);
+            }
+            else
+            {
+                //Writing out the validation errors
+                Utilities.WriteValidationErrors(input);
+                Assert.Fail();
+            }
         }
 
         /// <summary>
@@ -195,14 +243,21 @@ namespace SqlPlusDemo.Tests
             {
                 FeedbackId = 1
             };
-            Assert.IsTrue(input.IsValid());
+            if(input.IsValid())
+            {
+                //Call the service to get the output object
+                var output = ServiceFactory.Data().FeedbackDelete(input);
 
-            //Call the service to get the output object
-            var output = ServiceFactory.Data().FeedbackDelete(input);
+                //We can test the return value against the enumeration for Ok
+                Assert.IsTrue(output.ReturnValue == FeedbackDeleteOutput.Returns.Ok);
 
-            //We can test the return value against the enumeration for Deleted
-            Assert.IsTrue(output.ReturnValue == FeedbackDeleteOutput.Returns.Ok);
-
+            }
+            else
+            {
+                //Writing out the validation errors
+                Utilities.WriteValidationErrors(input);
+                Assert.Fail();
+            }
         }
     }
 }

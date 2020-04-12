@@ -8,9 +8,8 @@ namespace SqlPlusDemo.Tests
         [Test]
         public void GetDateTest()
         {
-            var result = ServiceFactory.Data().GetSQLDateTime();
-            Assert.IsTrue(result != null);
-            Console.WriteLine(result.ReturnValue);
+            var output = ServiceFactory.Data().GetSQLDateTime();
+            Console.WriteLine(output.ReturnValue);
         }
     }
 }

@@ -6,14 +6,21 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 namespace SqlPlus.Data.SampleNamespace.Models
 {
     /// <summary>
-    /// Result object for HelloWorld routine.
+    /// Result object for FeedbackById routine.
     /// </summary>
-    public partial class HelloWorldResult
+    public partial class FeedbackByIdResult
 	{
-        public string WelcomeMessage { set; get; }
+        public int FeedbackId { set; get; }
+        public string LastName { set; get; }
+        public string FirstName { set; get; }
+        public string Email { set; get; }
+        public string Subject { set; get; }
+        public string Message { set; get; }
+        public DateTime Created { set; get; }
     }
 }

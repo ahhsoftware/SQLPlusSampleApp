@@ -6,14 +6,26 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
+
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
 namespace SqlPlus.Data.SampleNamespace.Models
 {
     /// <summary>
-    /// Result object for HelloWorld routine.
+    /// Interface for FeedbackByIdInput object.
     /// </summary>
-    public partial class HelloWorldResult
-	{
-        public string WelcomeMessage { set; get; }
+    public interface IFeedbackByIdInput : IValidInput
+    {
+        int? FeedbackId { set; get; }
     }
-}
+
+    /// <summary>
+    /// Input object for FeedbackById method.
+    /// </summary>
+    public class FeedbackByIdInput : ValidInput, IFeedbackByIdInput
+    {
+        public int? FeedbackId { set; get; }
+
+    }
+} 

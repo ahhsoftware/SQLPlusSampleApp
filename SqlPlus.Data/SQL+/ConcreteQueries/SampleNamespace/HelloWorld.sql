@@ -40,7 +40,7 @@
 
 /* Your SQL statement(s) here note that Multiple Results are fully supported*/
 
-SELECT CONCAT('Hello ', @Name) AS WelcomMessage;
+SELECT CONCAT('Hello ', @Name) AS WelcomeMessage;
 
 
 IF @@ROWCOUNT = 0
