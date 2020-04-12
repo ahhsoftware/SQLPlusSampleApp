@@ -9,6 +9,6 @@ Illustrates how the generated libraries can be utilized in a variety of client a
 - Unit Test Project
 - MVC Application
 - Azure Functions
-- Blazor Application (cobined with the included azure functions)
+- Blazor Application (combined with the included azure functions)
 
 This project is available to all SQL+ .NET subscribers.
